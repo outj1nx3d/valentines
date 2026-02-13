@@ -433,6 +433,7 @@
 <div class="vinyl-container">
     <div class="vinyl-disc" id="vinylDisc"></div>
     <div class="play-btn" id="playBtn" title="Play/Pause"></div>
+    <div id="playHint" class="play-hint" style="display:none; font-size:0.85rem; color:#fff; text-align:center; max-width:200px;">If playback is blocked, press play inside the Spotify player.</div>
     <div class="spotify-player">
         <iframe id="spotifyIframe" data-src="https://open.spotify.com/embed/playlist/3x1GXMgJP24aLINlRR6ErT?utm_source=generator" style="border-radius:12px" src="about:blank" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
     </div>
@@ -463,7 +464,7 @@
 
         <p>
             Even when the connection is awful or you “kidnap” me to the store, I love our calls.<br>
-            I can’t wait for the day we finally meet in person — hopefully when we have the money — but for now, these little moments with you
+            I can’t wait for the day we finally meet in person — hopefully when we have the money — but for now, these little moments with you are perfect.
         </p>
 
         <p style="margin: 30px 0; font-size: 1.3rem;">
@@ -541,35 +542,65 @@
         const iframe = document.getElementById('spotifyIframe');
         const playBtn = document.getElementById('playBtn');
         const vinyl = document.getElementById('vinylDisc');
+        const playHint = document.getElementById('playHint');
         const originalSrc = iframe ? iframe.getAttribute('data-src') : null;
-        const playSrc = originalSrc ? originalSrc + '&autoplay=1' : null;
+        let isLoaded = false;
         let isPlaying = false;
 
-        function setPlaying(state) {
+        function setPlayingState(state) {
             isPlaying = state;
             if (state) {
-                if (iframe && playSrc) iframe.src = playSrc;
                 playBtn && playBtn.classList.add('playing');
                 vinyl && vinyl.classList.add('playing');
                 playBtn && (playBtn.title = 'Pause');
+                playHint && (playHint.style.display = 'none');
             } else {
-                if (iframe) iframe.src = 'about:blank';
                 playBtn && playBtn.classList.remove('playing');
                 vinyl && vinyl.classList.remove('playing');
                 playBtn && (playBtn.title = 'Play');
             }
         }
 
-        // Try to autoplay (may be blocked by browser policies)
-        if (playSrc && iframe) {
-            try { iframe.src = playSrc; playBtn && playBtn.classList.add('playing'); vinyl && vinyl.classList.add('playing'); isPlaying = true; } catch(e) { }
+        function loadAndPlay() {
+            if (!iframe || !originalSrc) return;
+            // load with autoplay hint — browsers may still block; because this is triggered by a user click,
+            // many browsers will allow playback when the click occurs.
+            iframe.src = originalSrc + (originalSrc.includes('?') ? '&' : '?') + 'utm_source=generator&autoplay=1';
+            isLoaded = true;
+            // try to set playing optimistically
+            setPlayingState(true);
+            // show hint after short delay if audio not heard
+            setTimeout(() => {
+                if (isLoaded && isPlaying) {
+                    // we leave playing state — if blocked, user can press play inside widget
+                    playHint && (playHint.style.display = 'block');
+                }
+            }, 1200);
+        }
+
+        function unloadPlayer() {
+            if (!iframe) return;
+            iframe.src = 'about:blank';
+            isLoaded = false;
+            setPlayingState(false);
+            playHint && (playHint.style.display = 'none');
         }
 
         if (playBtn) {
             playBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                setPlaying(!isPlaying);
+                if (!isLoaded) {
+                    loadAndPlay();
+                } else {
+                    // toggle
+                    if (isPlaying) unloadPlayer(); else loadAndPlay();
+                }
             });
+        }
+
+        // If iframe loads for any reason, mark loaded (helps when user reloads or external interaction)
+        if (iframe) {
+            iframe.addEventListener('load', () => { isLoaded = true; });
         }
     });
 </script>
