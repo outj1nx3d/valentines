@@ -5,25 +5,133 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>For My Love ❤️</title>
 <style>
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 1; }
+        50% { transform: translateY(-20px) rotate(10deg); }
+    }
+
+    @keyframes flutter {
+        0% { transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 1; }
+        100% { transform: translateY(100vh) translateX(100px) rotate(360deg); opacity: 0; }
+    }
+
+    @keyframes bgHeartFloat {
+        0% { transform: translateY(0) rotate(0deg); opacity: 0.5; }
+        100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+
+    @keyframes shimmer {
+        0%, 100% { opacity: 0.3; }
+        50% { opacity: 1; }
+    }
+
     body {
         margin: 0;
         height: 100vh;
         display: flex;
         justify-content: center;
         align-items: center;
-        background: linear-gradient(135deg, #ff9a9e, #fad0c4);
-        font-family: 'Georgia', serif;
+        background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 50%, #ffedc1 100%);
+        font-family: 'Segoe UI', 'Georgia', serif;
         overflow: hidden;
+        position: relative;
+    }
+
+    .background-hearts {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .bg-heart {
+        position: absolute;
+        font-size: 2rem;
+        opacity: 0.4;
+        animation: bgHeartFloat linear infinite;
+    }
+
+    .sanrio-char {
+        position: fixed;
+        font-size: 3rem;
+        z-index: 1;
+    }
+
+    .snoopy {
+        bottom: 20px;
+        left: 20px;
+    }
+
+    .char-heart {
+        position: absolute;
+        color: #ff6b9d;
+        font-size: 1.2rem;
+        animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    .hello-kitty {
+        top: 50px;
+        right: 30px;
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .badtz-maru {
+        bottom: 100px;
+        right: 40px;
+        animation: float 3.5s ease-in-out infinite 0.5s;
+    }
+
+    .pochacco {
+        top: 100px;
+        left: 40px;
+        animation: float 4s ease-in-out infinite 1s;
+    }
+
+    .container {
+        position: relative;
+        z-index: 10;
     }
 
     .envelope {
-        width: 200px;
-        height: 120px;
-        background: #fff;
+        width: 280px;
+        height: 180px;
+        background: linear-gradient(to bottom, #fff5f7, #ffffff);
         position: relative;
         cursor: pointer;
-        transition: transform 0.6s;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        box-shadow: 0 15px 35px rgba(255, 77, 109, 0.3);
+        border-radius: 5px;
+        border: 2px solid #ffb3c6;
+    }
+
+    .envelope:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 45px rgba(255, 77, 109, 0.4);
+    }
+
+    .envelope-body {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: white;
+        border-radius: 5px;
+    }
+
+    .envelope-line {
+        position: absolute;
+        width: 100%;
+        height: 1px;
+        background: #ffb3c6;
+        top: 50%;
+        left: 0;
     }
 
     .flap {
@@ -32,63 +140,267 @@
         left: 0;
         width: 0;
         height: 0;
-        border-left: 100px solid transparent;
-        border-right: 100px solid transparent;
-        border-bottom: 60px solid #ff6f91;
+        border-left: 140px solid transparent;
+        border-right: 140px solid transparent;
+        border-top: 90px solid #ff6f91;
         transform-origin: top;
-        transition: transform 0.6s;
+        transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        border-radius: 3px 3px 0 0;
+        box-shadow: inset 0 -2px 5px rgba(0,0,0,0.1);
+    }
+
+    .flap::after {
+        content: '💌';
+        position: absolute;
+        top: 20px;
+        left: -20px;
+        font-size: 2rem;
+        opacity: 0.8;
     }
 
     .letter {
-        position: absolute;
+        position: fixed;
         top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%) scale(0);
-        width: 300px;
-        padding: 20px;
-        background: white;
-        border-radius: 10px;
+        transform: translate(-50%, -50%) scale(0) rotateY(90deg);
+        width: 500px;
+        max-width: 85vw;
+        max-height: 80vh;
+        padding: 40px;
+        background: linear-gradient(135deg, #fff5f7 0%, #ffffff 100%);
+        border-radius: 15px;
         text-align: center;
         opacity: 0;
-        transition: all 0.8s ease;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        transition: all 0.9s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        z-index: 100;
+        border: 3px solid #ffb3c6;
+        overflow-y: auto;
+    }
+
+    .letter::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 40%, rgba(255, 182, 198, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 60%, rgba(255, 107, 157, 0.08) 0%, transparent 50%);
+        border-radius: 15px;
+        pointer-events: none;
     }
 
     .letter.show {
-        transform: translate(-50%, -50%) scale(1);
+        transform: translate(-50%, -50%) scale(1) rotateY(0deg);
         opacity: 1;
+    }
+
+    .letter-content {
+        position: relative;
+        z-index: 2;
     }
 
     h1 {
         color: #ff4d6d;
+        font-size: 2.5rem;
+        margin: 0 0 20px 0;
+        text-shadow: 2px 2px 4px rgba(255, 107, 157, 0.2);
+        letter-spacing: 1px;
+    }
+
+    .letter p {
+        color: #663366;
+        font-size: 1.1rem;
+        line-height: 1.8;
+        margin: 15px 0;
+        font-style: italic;
+    }
+
+    .signature {
+        margin-top: 30px;
+        font-size: 1.2rem;
+        color: #ff4d6d;
+        font-weight: bold;
+    }
+
+    .closing-hearts {
+        font-size: 1.5rem;
+        margin: 15px 0;
+        letter-spacing: 5px;
+    }
+
+    .flutter-heart {
+        position: fixed;
+        pointer-events: none;
+        font-size: 1.5rem;
+        animation: flutter linear forwards;
+        z-index: 50;
+    }
+
+    .letter-decoration {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 20px;
+        opacity: 0.6;
+    }
+
+    @media (max-width: 600px) {
+        .envelope {
+            width: 200px;
+            height: 130px;
+        }
+
+        .flap {
+            border-left: 100px solid transparent;
+            border-right: 100px solid transparent;
+            border-top: 65px solid #ff6f91;
+        }
+
+        .letter {
+            width: 85vw;
+            padding: 25px;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+        }
+
+        .letter p {
+            font-size: 0.95rem;
+        }
     }
 </style>
 </head>
 <body>
 
-<div class="envelope" onclick="openLetter()">
-    <div class="flap"></div>
+<div class="background-hearts" id="bgHearts"></div>
+
+<div class="sanrio-char hello-kitty" title="Hello Kitty">
+    🎀
+    <span class="char-heart" style="top: -20px; right: -10px;">❤️</span>
+</div>
+
+<div class="sanrio-char badtz-maru" title="Badtz-Maru">
+    🐧
+    <span class="char-heart" style="top: -25px; right: -15px;">❤️</span>
+</div>
+
+<div class="sanrio-char pochacco" title="Pochacco">
+    🐕
+    <span class="char-heart" style="top: -25px; right: -15px;">❤️</span>
+</div>
+
+<div class="sanrio-char snoopy" title="Snoopy">
+    🐶
+    <span class="char-heart" style="top: -25px; right: -15px;">❤️</span>
+</div>
+
+<div class="container">
+    <div class="envelope" onclick="openLetter(event)">
+        <div class="envelope-body">
+            <div class="envelope-line"></div>
+        </div>
+        <div class="flap"></div>
+    </div>
 </div>
 
 <div class="letter" id="letter">
-    <h1>Happy Valentine's Day Angie❤️</h1>
-    <p>
-        To the most beautiful soul in my life,<br><br>
-        Every day with you feels like magic.  
-        Thank you for being the best girlfriend ever,  
-        and my favorite person.  
-        <br><br>
-        I love you more than words can ever say.
-        <br><br>
-        Yours Truly, Jo 💌
-    </p>
+    <div class="letter-content">
+        <h1>💕 Happy Valentine's Day 💕</h1>
+        <h2 style="color: #ff6f91; font-size: 1.8rem; margin: 10px 0;">Angie ✨</h2>
+        
+        <p style="margin-top: 30px;">
+            To the most beautiful soul in my life,
+        </p>
+
+        <p>
+            Every moment with you feels like a beautiful dream.<br>
+            Every laugh, every touch, every glance—they all mean the world to me.
+        </p>
+
+        <p>
+            Thank you for being my greatest blessing,<br>
+            my favorite person, and my home.
+        </p>
+
+        <p>
+            In a world full of chaos, you are my calm.<br>
+            In a world full of ordinary, you are my magic.
+        </p>
+
+        <p style="margin: 30px 0; font-size: 1.3rem;">
+            I love you with all my heart. 💗
+        </p>
+
+        <div class="closing-hearts">❤️ 💗 ❤️</div>
+
+        <div class="signature">
+            Forever Yours,<br>
+            Jo 💌
+        </div>
+
+        <div class="letter-decoration">
+            <span>✨</span>
+            <span>🌹</span>
+            <span>💐</span>
+            <span>🌹</span>
+            <span>✨</span>
+        </div>
+    </div>
 </div>
 
 <script>
-function openLetter() {
-    document.querySelector(".flap").style.transform = "rotateX(180deg)";
-    document.getElementById("letter").classList.add("show");
-}
+    // Create background hearts
+    function createBackgroundHearts() {
+        const bgHearts = document.getElementById('bgHearts');
+        const hearts = ['❤️', '💗', '💕', '💖', '🧡'];
+        
+        for (let i = 0; i < 15; i++) {
+            const heart = document.createElement('div');
+            heart.className = 'bg-heart';
+            heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.top = Math.random() * 100 + '%';
+            heart.style.fontSize = (Math.random() * 1.5 + 0.5) + 'rem';
+            heart.style.animationDuration = (Math.random() * 8 + 8) + 's';
+            heart.style.animationDelay = Math.random() * 5 + 's';
+            bgHearts.appendChild(heart);
+        }
+    }
+
+    // Create fluttering hearts when letter opens
+    function createFlutteringHearts() {
+        const hearts = ['❤️', '💗', '💕', '💖', '🧡', '💝'];
+        
+        for (let i = 0; i < 20; i++) {
+            setTimeout(() => {
+                const heart = document.createElement('div');
+                heart.className = 'flutter-heart';
+                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.top = '0';
+                heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                heart.style.animationDelay = '0s';
+                document.body.appendChild(heart);
+                
+                setTimeout(() => heart.remove(), 5000);
+            }, i * 100);
+        }
+    }
+
+    function openLetter(event) {
+        event.target.closest('.envelope').style.pointerEvents = 'none';
+        document.querySelector(".flap").style.transform = "rotateX(180deg)";
+        document.getElementById("letter").classList.add("show");
+        
+        // Trigger fluttering hearts after a short delay
+        setTimeout(createFlutteringHearts, 400);
+    }
+
+    // Initialize background hearts on page load
+    window.addEventListener('load', createBackgroundHearts);
 </script>
 
 </body>
