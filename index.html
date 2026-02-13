@@ -262,12 +262,13 @@
     .vinyl-container {
         position: fixed;
         bottom: 30px;
-        right: 180px;
+        right: 220px;
         z-index: 5;
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 15px;
+        gap: 12px;
+        user-select: none;
     }
 
     .vinyl-disc {
@@ -281,6 +282,13 @@
         animation: spin 4s linear infinite;
         border: 3px solid #333;
         position: relative;
+        animation-play-state: paused;
+        transition: transform 0.25s ease;
+    }
+
+    .vinyl-disc.playing {
+        animation-play-state: running;
+        transform: scale(1.02);
     }
 
     .vinyl-disc::before {
@@ -310,11 +318,49 @@
         z-index: 3;
     }
 
+    .play-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+        position: relative;
+        transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    .play-btn:hover { transform: translateY(-3px); }
+
+    .play-btn::before {
+        content: '';
+        display: block;
+        width: 0;
+        height: 0;
+        border-left: 12px solid #ff4d6d;
+        border-top: 8px solid transparent;
+        border-bottom: 8px solid transparent;
+    }
+
+    .play-btn.playing::before { border-left-color: transparent; width: 0; height: 0; }
+    .play-btn.playing::after {
+        content: '';
+        display: block;
+        width: 10px;
+        height: 12px;
+        background: #ff4d6d;
+        box-shadow: 16px 0 0 #ff4d6d;
+        border-radius: 2px;
+    }
+
     .spotify-player {
         background: rgba(0, 0, 0, 0.7);
         border-radius: 10px;
         padding: 10px;
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        width: 220px;
     }
 
     .spotify-player iframe {
@@ -385,9 +431,10 @@
 </div>
 
 <div class="vinyl-container">
-    <div class="vinyl-disc"></div>
+    <div class="vinyl-disc" id="vinylDisc"></div>
+    <div class="play-btn" id="playBtn" title="Play/Pause"></div>
     <div class="spotify-player">
-        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/3x1GXMgJP24aLINlRR6ErT?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        <iframe id="spotifyIframe" data-src="https://open.spotify.com/embed/playlist/3x1GXMgJP24aLINlRR6ErT?utm_source=generator" style="border-radius:12px" src="about:blank" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
     </div>
 </div>
 
@@ -489,7 +536,42 @@
     }
 
     // Initialize background hearts on page load
-    window.addEventListener('load', createBackgroundHearts);
+    window.addEventListener('load', () => {
+        createBackgroundHearts();
+        const iframe = document.getElementById('spotifyIframe');
+        const playBtn = document.getElementById('playBtn');
+        const vinyl = document.getElementById('vinylDisc');
+        const originalSrc = iframe ? iframe.getAttribute('data-src') : null;
+        const playSrc = originalSrc ? originalSrc + '&autoplay=1' : null;
+        let isPlaying = false;
+
+        function setPlaying(state) {
+            isPlaying = state;
+            if (state) {
+                if (iframe && playSrc) iframe.src = playSrc;
+                playBtn && playBtn.classList.add('playing');
+                vinyl && vinyl.classList.add('playing');
+                playBtn && (playBtn.title = 'Pause');
+            } else {
+                if (iframe) iframe.src = 'about:blank';
+                playBtn && playBtn.classList.remove('playing');
+                vinyl && vinyl.classList.remove('playing');
+                playBtn && (playBtn.title = 'Play');
+            }
+        }
+
+        // Try to autoplay (may be blocked by browser policies)
+        if (playSrc && iframe) {
+            try { iframe.src = playSrc; playBtn && playBtn.classList.add('playing'); vinyl && vinyl.classList.add('playing'); isPlaying = true; } catch(e) { }
+        }
+
+        if (playBtn) {
+            playBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                setPlaying(!isPlaying);
+            });
+        }
+    });
 </script>
 
 </body>
