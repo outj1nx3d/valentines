@@ -64,6 +64,20 @@
         animation: bgHeartFloat linear infinite;
     }
 
+    .page-title {
+        position: fixed;
+        top: 18px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 30;
+        font-family: 'Georgia', serif;
+        color: #ff3b6b;
+        font-size: 1.6rem;
+        text-shadow: 0 2px 6px rgba(255,107,157,0.25);
+        letter-spacing: 1px;
+        pointer-events: none;
+    }
+
     .sanrio-char {
         position: fixed;
         z-index: 1;
@@ -413,6 +427,7 @@
 <body>
 
 <div class="background-hearts" id="bgHearts"></div>
+<div class="page-title">For My Valentine</div>
 
 <div class="sanrio-char hello-kitty" title="Hello Kitty">
     <span class="char-heart" style="top: -20px; right: -10px;">❤️</span>
@@ -563,15 +578,11 @@
 
         function loadAndPlay() {
             if (!iframe || !originalSrc) return;
-            // Load the embed (user gesture). Some browsers/Spotify may still block autoplay inside iframe.
-            iframe.src = originalSrc + (originalSrc.includes('?') ? '&' : '?') + 'utm_source=generator';
+            // Load the embed on user click; include autoplay param so many browsers allow playback when triggered
+            iframe.src = originalSrc + (originalSrc.includes('?') ? '&' : '?') + 'utm_source=generator&autoplay=1';
             isLoaded = true;
             // set UI to playing; vinyl will spin when setPlayingState(true) called.
             setPlayingState(true);
-            // As a reliable fallback, open the playlist in a new tab so the user can play directly in Spotify web/app.
-            try {
-                window.open('https://open.spotify.com/playlist/3x1GXMgJP24aLINlRR6ErT', '_blank');
-            } catch (e) { /* ignore pop-up blocking */ }
             // show hint after short delay telling user to press play in the widget if audio doesn't start
             setTimeout(() => {
                 if (isLoaded && isPlaying) {
