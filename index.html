@@ -135,6 +135,9 @@
     .container {
         position: relative;
         z-index: 10;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
     .envelope {
@@ -253,6 +256,35 @@
     }
 
     .close-btn:hover { transform: translateY(-2px); }
+
+    .heart-image-container {
+        width: 140px;
+        height: 140px;
+        position: relative;
+        margin: 0 auto 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .heart-image {
+        width: 100%;
+        height: 100%;
+        background-image: url('angie.jpg');
+        background-size: cover;
+        background-position: center;
+        clip-path: polygon(50% 0%, 100% 38%, 100% 100%, 50% 85%, 0% 100%, 0% 38%);
+        border-radius: 50%;
+        box-shadow: 0 8px 20px rgba(255, 77, 109, 0.3);
+    }
+
+    @media (max-width: 600px) {
+        .heart-image-container { width: 100px; height: 100px; margin: 0 auto 15px; }
+    }
+
+    @media (max-width: 480px) {
+        .heart-image-container { width: 80px; height: 80px; margin: 0 auto 12px; }
+    }
 
     .letter-content {
         position: relative;
@@ -514,6 +546,9 @@
     <audio id="audioLil" src="lil.mp3" preload="none"></audio>
 
 <div class="container">
+    <div class="heart-image-container">
+        <div class="heart-image"></div>
+    </div>
     <div class="envelope" onclick="openLetter(event)">
         <div class="envelope-body">
             <div class="envelope-line"></div>
