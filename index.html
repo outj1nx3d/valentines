@@ -563,16 +563,18 @@
 
         function loadAndPlay() {
             if (!iframe || !originalSrc) return;
-            // load with autoplay hint — browsers may still block; because this is triggered by a user click,
-            // many browsers will allow playback when the click occurs.
-            iframe.src = originalSrc + (originalSrc.includes('?') ? '&' : '?') + 'utm_source=generator&autoplay=1';
+            // Load the embed (user gesture). Some browsers/Spotify may still block autoplay inside iframe.
+            iframe.src = originalSrc + (originalSrc.includes('?') ? '&' : '?') + 'utm_source=generator';
             isLoaded = true;
-            // try to set playing optimistically
+            // set UI to playing; vinyl will spin when setPlayingState(true) called.
             setPlayingState(true);
-            // show hint after short delay if audio not heard
+            // As a reliable fallback, open the playlist in a new tab so the user can play directly in Spotify web/app.
+            try {
+                window.open('https://open.spotify.com/playlist/3x1GXMgJP24aLINlRR6ErT', '_blank');
+            } catch (e) { /* ignore pop-up blocking */ }
+            // show hint after short delay telling user to press play in the widget if audio doesn't start
             setTimeout(() => {
                 if (isLoaded && isPlaying) {
-                    // we leave playing state — if blocked, user can press play inside widget
                     playHint && (playHint.style.display = 'block');
                 }
             }, 1200);
