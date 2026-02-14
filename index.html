@@ -72,7 +72,7 @@
         z-index: 30;
         font-family: 'Georgia', serif;
         color: #ff3b6b;
-        font-size: 1.6rem;
+        font-size: 2.4rem;
         text-shadow: 0 2px 6px rgba(255,107,157,0.25);
         letter-spacing: 1px;
         pointer-events: none;
@@ -86,6 +86,7 @@
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center;
+        cursor: pointer;
     }
 
     .snoopy {
@@ -223,6 +224,26 @@
         transform: translate(-50%, -50%) scale(1) rotateY(0deg);
         opacity: 1;
     }
+
+    .close-btn {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        z-index: 110;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: none;
+        background: rgba(255,255,255,0.9);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.1rem;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    }
+
+    .close-btn:hover { transform: translateY(-2px); }
 
     .letter-content {
         position: relative;
@@ -393,7 +414,8 @@
         }
 
         .spotify-player {
-            display: none;
+            display: block;
+            width: 180px;
         }
     }
 
@@ -454,6 +476,10 @@
     </div>
 </div>
 
+    <!-- Hidden local audio files (place ah.mp3 and lil.mp3 into project folder) -->
+    <audio id="audioAh" src="ah.mp3" preload="none"></audio>
+    <audio id="audioLil" src="lil.mp3" preload="none"></audio>
+
 <div class="container">
     <div class="envelope" onclick="openLetter(event)">
         <div class="envelope-body">
@@ -464,6 +490,7 @@
 </div>
 
 <div class="letter" id="letter">
+    <button id="closeBtn" class="close-btn" aria-label="Close letter">✕</button>
     <div class="letter-content">
         <h1>💕 Happy Valentine's Day 💕</h1>
         <h2 style="color: #ff6f91; font-size: 1.8rem; margin: 10px 0;">Angie ✨</h2>
@@ -551,6 +578,15 @@
         setTimeout(createFlutteringHearts, 400);
     }
 
+    function closeLetter() {
+        const envelope = document.querySelector('.envelope');
+        if (envelope) envelope.style.pointerEvents = '';
+        const flap = document.querySelector('.flap');
+        if (flap) flap.style.transform = 'rotateX(0deg)';
+        const letter = document.getElementById('letter');
+        if (letter) letter.classList.remove('show');
+    }
+
     // Initialize background hearts on page load
     window.addEventListener('load', () => {
         createBackgroundHearts();
@@ -615,6 +651,61 @@
         if (iframe) {
             iframe.addEventListener('load', () => { isLoaded = true; });
         }
+
+        // Local audio players (Hello Kitty -> ah.mp3, Pom -> lil.mp3)
+        const audioAh = document.getElementById('audioAh');
+        const audioLil = document.getElementById('audioLil');
+        const hello = document.querySelector('.hello-kitty');
+        const pom = document.querySelector('.snoopy');
+
+        function stopOtherLocal(except) {
+            if (audioAh && audioAh !== except) { audioAh.pause(); audioAh.currentTime = 0; }
+            if (audioLil && audioLil !== except) { audioLil.pause(); audioLil.currentTime = 0; }
+        }
+
+        if (hello) {
+            hello.addEventListener('click', (e) => {
+                e.stopPropagation();
+                // stop spotify if playing
+                unloadPlayer();
+                if (!audioAh) return;
+                if (audioAh.paused) {
+                    stopOtherLocal(audioAh);
+                    audioAh.play().then(() => {
+                        setPlayingState(true);
+                    }).catch(() => {
+                        // playback blocked — show hint
+                        playHint && (playHint.style.display = 'block');
+                    });
+                } else {
+                    audioAh.pause();
+                    setPlayingState(false);
+                }
+            });
+        }
+
+        if (pom) {
+            pom.addEventListener('click', (e) => {
+                e.stopPropagation();
+                unloadPlayer();
+                if (!audioLil) return;
+                if (audioLil.paused) {
+                    stopOtherLocal(audioLil);
+                    audioLil.play().then(() => {
+                        setPlayingState(true);
+                    }).catch(() => {
+                        playHint && (playHint.style.display = 'block');
+                    });
+                } else {
+                    audioLil.pause();
+                    setPlayingState(false);
+                }
+            });
+        }
+
+        // When local audio ends, reset vinyl
+        if (audioAh) audioAh.addEventListener('ended', () => setPlayingState(false));
+        if (audioLil) audioLil.addEventListener('ended', () => setPlayingState(false));
     });
 </script>
 
