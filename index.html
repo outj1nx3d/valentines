@@ -374,6 +374,7 @@
         box-shadow: 0 6px 18px rgba(0,0,0,0.25);
         position: relative;
         transition: transform 0.15s ease, background 0.15s ease;
+        flex-shrink: 0;
     }
 
     .play-btn:hover { transform: translateY(-3px); }
@@ -430,41 +431,51 @@
 
     /* Mobile tweaks to avoid overlapping fixed elements */
     @media (max-width: 600px) {
-        .sanrio-char { width: 64px; height: 64px; }
-        .hello-kitty { top: 90px; right: 12px; }
-        .badtz-maru { bottom: 140px; right: 12px; }
-        .pochacco { top: 130px; left: 12px; }
-        .snoopy { bottom: 12px; left: 12px; width: 64px; height: 64px; }
-        .vinyl-container { left: 50%; right: auto; transform: translateX(-50%); bottom: 72px; }
-        .spotify-player { width: 85vw; max-width: 320px; }
-        .page-title { font-size: 1.8rem; top: 12px; }
-        #playHint { max-width: 240px; font-size: 0.9rem; }
+        .sanrio-char { width: 56px; height: 56px; }
+        .char-heart { font-size: 0.9rem; }
+        .hello-kitty { top: 80px; right: 8px; }
+        .badtz-maru { bottom: 120px; right: 8px; }
+        .pochacco { top: 110px; left: 8px; }
+        .snoopy { bottom: 8px; left: 8px; }
+        .vinyl-container { left: 50%; right: auto; transform: translateX(-50%); bottom: 60px; gap: 8px; }
+        .vinyl-disc { width: 80px; height: 80px; }
+        .play-btn { width: 40px; height: 40px; }
+        .spotify-player { width: 85vw; max-width: 300px; }
+        .spotify-player iframe { height: 130px !important; }
+        .page-title { font-size: 1.6rem; top: 12px; }
+        #playHint { max-width: 220px; font-size: 0.85rem; }
+        .envelope { width: 180px; height: 120px; }
+        .flap { border-left: 90px solid transparent; border-right: 90px solid transparent; border-top: 60px solid #ff6f91; }
+        .letter { width: 85vw; padding: 22px; }
+        h1 { font-size: 1.6rem; }
+        h2 { font-size: 1.3rem; }
+        .letter p { font-size: 0.9rem; }
     }
 
-    @media (max-width: 600px) {
-        .envelope {
-            width: 200px;
-            height: 130px;
-        }
-
-        .flap {
-            border-left: 100px solid transparent;
-            border-right: 100px solid transparent;
-            border-top: 65px solid #ff6f91;
-        }
-
-        .letter {
-            width: 85vw;
-            padding: 25px;
-        }
-
-        h1 {
-            font-size: 1.8rem;
-        }
-
-        .letter p {
-            font-size: 0.95rem;
-        }
+    /* Aggressive sizing for very small screens (under 480px) */
+    @media (max-width: 480px) {
+        .sanrio-char { width: 44px; height: 44px; }
+        .char-heart { font-size: 0.7rem; }
+        .hello-kitty { top: 65px; right: 6px; }
+        .badtz-maru { bottom: 100px; right: 6px; }
+        .pochacco { top: 95px; left: 6px; }
+        .snoopy { bottom: 6px; left: 6px; }
+        .vinyl-container { bottom: 48px; gap: 6px; }
+        .vinyl-disc { width: 60px; height: 60px; }
+        .play-btn { width: 32px; height: 32px; }
+        .play-btn::before { border-left: 8px solid #ff4d6d; border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+        .play-btn.playing::after { width: 6px; height: 8px; box-shadow: 10px 0 0 #ff4d6d; }
+        .spotify-player { width: 90vw; max-width: 260px; }
+        .spotify-player iframe { height: 110px !important; }
+        .page-title { font-size: 1.2rem; top: 8px; }
+        #playHint { max-width: 180px; font-size: 0.7rem; }
+        .envelope { width: 150px; height: 100px; }
+        .flap { border-left: 75px solid transparent; border-right: 75px solid transparent; border-top: 50px solid #ff6f91; }
+        .letter { width: 90vw; padding: 18px; }
+        h1 { font-size: 1.3rem; }
+        h2 { font-size: 1rem; }
+        .letter p { font-size: 0.8rem; line-height: 1.5; }
+        .close-btn { width: 30px; height: 30px; font-size: 0.9rem; }
     }
 </style>
 </head>
