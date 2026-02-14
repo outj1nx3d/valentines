@@ -274,6 +274,7 @@
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center;
+        cursor: pointer;
     }
 
     @media (max-width: 600px) {
@@ -544,6 +545,7 @@
     <!-- Hidden local audio files (place ah.mp3 and lil.mp3 into project folder) -->
     <audio id="audioAh" src="ah.mp3" preload="none"></audio>
     <audio id="audioLil" src="lil.mp3" preload="none"></audio>
+    <audio id="audioValentinesJo" src="valentinesjo.mp3" preload="none"></audio>
 
 <div class="container">
     <div class="heart-image-container">
@@ -731,13 +733,16 @@
         // Local audio players (Hello Kitty -> ah.mp3, Pom -> lil.mp3)
         const audioAh = document.getElementById('audioAh');
         const audioLil = document.getElementById('audioLil');
+        const audioValentinesJo = document.getElementById('audioValentinesJo');
         const hello = document.querySelector('.hello-kitty');
         const pom = document.querySelector('.snoopy');
+        const heartImage = document.querySelector('.heart-image');
         const closeBtn = document.getElementById('closeBtn');
 
         function stopOtherLocal(except) {
             if (audioAh && audioAh !== except) { audioAh.pause(); audioAh.currentTime = 0; }
             if (audioLil && audioLil !== except) { audioLil.pause(); audioLil.currentTime = 0; }
+            if (audioValentinesJo && audioValentinesJo !== except) { audioValentinesJo.pause(); audioValentinesJo.currentTime = 0; }
         }
 
         if (hello) {
@@ -783,6 +788,27 @@
         // When local audio ends, reset vinyl
         if (audioAh) audioAh.addEventListener('ended', () => setPlayingState(false));
         if (audioLil) audioLil.addEventListener('ended', () => setPlayingState(false));
+        if (audioValentinesJo) audioValentinesJo.addEventListener('ended', () => setPlayingState(false));
+
+        // Heart image click handler: play valentinesjo.mp3
+        if (heartImage) {
+            heartImage.addEventListener('click', (e) => {
+                e.stopPropagation();
+                unloadPlayer();
+                if (!audioValentinesJo) return;
+                if (audioValentinesJo.paused) {
+                    stopOtherLocal(audioValentinesJo);
+                    audioValentinesJo.play().then(() => {
+                        setPlayingState(true);
+                    }).catch(() => {
+                        playHint && (playHint.style.display = 'block');
+                    });
+                } else {
+                    audioValentinesJo.pause();
+                    setPlayingState(false);
+                }
+            });
+        }
 
         // Close button handler: close letter and stop any audio or iframe playback
         if (closeBtn) {
@@ -792,6 +818,7 @@
                 // stop local audio
                 if (audioAh) { audioAh.pause(); audioAh.currentTime = 0; }
                 if (audioLil) { audioLil.pause(); audioLil.currentTime = 0; }
+                if (audioValentinesJo) { audioValentinesJo.pause(); audioValentinesJo.currentTime = 0; }
                 // stop spotify iframe
                 if (iframe) { iframe.src = 'about:blank'; }
                 setPlayingState(false);
