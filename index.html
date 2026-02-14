@@ -64,6 +64,14 @@
         animation: bgHeartFloat linear infinite;
     }
 
+    .bg-rose {
+        position: absolute;
+        font-size: 1.6rem;
+        opacity: 0.5;
+        animation: bgHeartFloat linear infinite;
+        transform-origin: center;
+    }
+
     .page-title {
         position: fixed;
         top: 18px;
@@ -419,6 +427,19 @@
         }
     }
 
+    /* Mobile tweaks to avoid overlapping fixed elements */
+    @media (max-width: 600px) {
+        .sanrio-char { width: 64px; height: 64px; }
+        .hello-kitty { top: 70px; right: 10px; }
+        .badtz-maru { bottom: 110px; right: 12px; }
+        .pochacco { top: 110px; left: 12px; }
+        .snoopy { bottom: 12px; left: 12px; width: 64px; height: 64px; }
+        .vinyl-container { right: 50%; transform: translateX(50%); bottom: 8px; }
+        .spotify-player { width: 85vw; max-width: 320px; }
+        .page-title { font-size: 1.8rem; top: 12px; }
+        #playHint { max-width: 240px; font-size: 0.9rem; }
+    }
+
     @media (max-width: 600px) {
         .envelope {
             width: 200px;
@@ -531,21 +552,29 @@
 </div>
 
 <script>
-    // Create background hearts
+    // Create background hearts and roses (more on mobile)
     function createBackgroundHearts() {
         const bgHearts = document.getElementById('bgHearts');
-        const hearts = ['❤️', '💗', '💕', '💖', '🧡'];
-        
-        for (let i = 0; i < 15; i++) {
-            const heart = document.createElement('div');
-            heart.className = 'bg-heart';
-            heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
-            heart.style.left = Math.random() * 100 + '%';
-            heart.style.top = Math.random() * 100 + '%';
-            heart.style.fontSize = (Math.random() * 1.5 + 0.5) + 'rem';
-            heart.style.animationDuration = (Math.random() * 8 + 8) + 's';
-            heart.style.animationDelay = Math.random() * 5 + 's';
-            bgHearts.appendChild(heart);
+        const shapes = ['❤️', '💗', '💕', '💖', '🧡', '🌹'];
+        const count = window.innerWidth < 600 ? 30 : 18;
+
+        for (let i = 0; i < count; i++) {
+            const val = shapes[Math.floor(Math.random() * shapes.length)];
+            const el = document.createElement('div');
+            if (val === '🌹') {
+                el.className = 'bg-rose';
+            } else {
+                el.className = 'bg-heart';
+            }
+            el.textContent = val;
+            el.style.left = Math.random() * 100 + '%';
+            el.style.top = Math.random() * 100 + '%';
+            const size = (Math.random() * 1.6 + 0.6);
+            el.style.fontSize = size + 'rem';
+            el.style.animationDuration = (Math.random() * 10 + 6) + 's';
+            el.style.animationDelay = Math.random() * 6 + 's';
+            el.style.opacity = 0.3 + Math.random() * 0.5;
+            bgHearts.appendChild(el);
         }
     }
 
