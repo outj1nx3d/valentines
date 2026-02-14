@@ -101,6 +101,7 @@
         bottom: 20px;
         left: 20px;
         background-image: url('pom.png');
+        animation: float 3.2s ease-in-out infinite 0.8s;
     }
 
     .char-heart {
@@ -430,11 +431,11 @@
     /* Mobile tweaks to avoid overlapping fixed elements */
     @media (max-width: 600px) {
         .sanrio-char { width: 64px; height: 64px; }
-        .hello-kitty { top: 70px; right: 10px; }
-        .badtz-maru { bottom: 110px; right: 12px; }
-        .pochacco { top: 110px; left: 12px; }
+        .hello-kitty { top: 90px; right: 12px; }
+        .badtz-maru { bottom: 140px; right: 12px; }
+        .pochacco { top: 130px; left: 12px; }
         .snoopy { bottom: 12px; left: 12px; width: 64px; height: 64px; }
-        .vinyl-container { right: 50%; transform: translateX(50%); bottom: 8px; }
+        .vinyl-container { left: 50%; right: auto; transform: translateX(-50%); bottom: 72px; }
         .spotify-player { width: 85vw; max-width: 320px; }
         .page-title { font-size: 1.8rem; top: 12px; }
         #playHint { max-width: 240px; font-size: 0.9rem; }
@@ -511,7 +512,7 @@
 </div>
 
 <div class="letter" id="letter">
-    <button id="closeBtn" class="close-btn" aria-label="Close letter">✕</button>
+    <button id="closeBtn" type="button" onclick="(function(e){e.stopPropagation(); closeLetter(); var iframe=document.getElementById('spotifyIframe'); if(iframe) iframe.src='about:blank'; var a=document.getElementById('audioAh'); if(a){a.pause(); a.currentTime=0;} var b=document.getElementById('audioLil'); if(b){b.pause(); b.currentTime=0;} })(event)" class="close-btn" aria-label="Close letter">✕</button>
     <div class="letter-content">
         <h1>💕 Happy Valentine's Day 💕</h1>
         <h2 style="color: #ff6f91; font-size: 1.8rem; margin: 10px 0;">Angie ✨</h2>
@@ -686,6 +687,7 @@
         const audioLil = document.getElementById('audioLil');
         const hello = document.querySelector('.hello-kitty');
         const pom = document.querySelector('.snoopy');
+        const closeBtn = document.getElementById('closeBtn');
 
         function stopOtherLocal(except) {
             if (audioAh && audioAh !== except) { audioAh.pause(); audioAh.currentTime = 0; }
@@ -735,6 +737,21 @@
         // When local audio ends, reset vinyl
         if (audioAh) audioAh.addEventListener('ended', () => setPlayingState(false));
         if (audioLil) audioLil.addEventListener('ended', () => setPlayingState(false));
+
+        // Close button handler: close letter and stop any audio or iframe playback
+        if (closeBtn) {
+            closeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeLetter();
+                // stop local audio
+                if (audioAh) { audioAh.pause(); audioAh.currentTime = 0; }
+                if (audioLil) { audioLil.pause(); audioLil.currentTime = 0; }
+                // stop spotify iframe
+                if (iframe) { iframe.src = 'about:blank'; }
+                setPlayingState(false);
+                playHint && (playHint.style.display = 'none');
+            });
+        }
     });
 </script>
 
